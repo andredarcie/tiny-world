@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiny Farm</title>
+</head>
+<body>
+    <h1>TinyFarm</h1>
+    <p id="dia">Dia: </p>
+    <canvas id="farm">
+    </canvas>
+    <p id="resultado"></p>
+    <script>
+        let matriz = [
+            [],
+            [],
+            [],
+            []
+        ];
+
+        let canvas = document.getElementById("farm");
+        let dia = document.getElementById("dia");
+        var ctx = canvas.getContext("2d");
+
+
+        let elemLeft = canvas.offsetLeft + canvas.clientLeft;
+        let elemTop = canvas.offsetTop + canvas.clientTop;
+            
+        canvas.addEventListener('click', function(event) {
+            let x = event.pageX - elemLeft,
+                y = event.pageY - elemTop;
+            
+            checkClick(x, y);
+        }, false);
+
+        function checkClick(clickX, clickY) {
+            for (let x = 0; x < 4; x++) {
+                for (let y = 0; y < 4; y++) {
+                    let currentTile = matriz[x][y];
+                    if (clickX >= currentTile.startX &&
+                        clickX <= (currentTile.startX + currentTile.boxSize) &&
+                        clickY >= currentTile.startY &&
+                        clickY <= (currentTile.startY + currentTile.boxSize)) {
+                    currentTile.type = 1;
+                    }
+                }
+            }
+            drawLoop();
+        }
+
+        function drawFarm() {
+            for (let x = 0; x < 4; x++) {
+                for (let y = 0; y < 4; y++) {
+                    ctx.fillStyle = "brown";
+                    matriz[x][y] = { 
+                        startX: x * 30,
+                        startY: y * 30,
+                        boxSize: 25,
+                        type: 0
+                    };
+                    
+                    ctx.fillRect(matriz[x][y].startX, 
+                                matriz[x][y].startY, 
+                                matriz[x][y].boxSize, 
+                                matriz[x][y].boxSize);
+                }
+            }
+        
+            drawLoop();
+        }
+
+        drawFarm();
+
+        function drawLoop() {
+            for (let x = 0; x < 4; x++) {
+                for (let y = 0; y < 4; y++) {
+                
+                if (matriz[x][y].type == 0) {
+                    ctx.fillStyle = "#e67e22";
+                }
+                
+                if (matriz[x][y].type == 1) {
+                    ctx.fillStyle = "#2ecc71";
+                }
+                console.log(matriz[x][y].type);
+                if (matriz[x][y].type == 2) {
+                    ctx.fillStyle = "#8e44ad";
+                }
+                
+                ctx.fillRect(matriz[x][y].startX, 
+                            matriz[x][y].startY, 
+                            matriz[x][y].boxSize, 
+                            matriz[x][y].boxSize);
+                }
+            }
+        }
+
+        var numDia = 0;
+
+        function grow() {
+            numDia++;
+            dia.innerHTML = "Dia: " + numDia;
+        
+            for (let x = 0; x < 4; x++) {
+                for (let y = 0; y < 4; y++) {
+                    if (matriz[x][y].type == 1) {
+                    matriz[x][y].type = 2;
+                    }
+                }
+            }
+        }
+
+        setInterval(function(){ grow(); drawLoop(); }, 5000);
+    </script>
+</body>
+</html>
